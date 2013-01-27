@@ -1,0 +1,9 @@
+USE_DB=N
+RECIPES_FILE=C:\\Users\\rrussell\\Dropbox\\python-projects\\rjr-e\\shopping\\props-file\\recipes.dat
+INGREDIENTS_FILE=C:\\Users\\rrussell\\Dropbox\\python-projects\\rjr-e\\shopping\\props-file\\ingredients.dat
+RECIPE_INGREDIENTS_FILE=C:\\Users\\rrussell\\Dropbox\\python-projects\\rjr-e\\shopping\\props-file\\recipe_ingredients.dat
+DB_HOST=81.17.241.90
+DB_NAME=m48971_shopping
+DB_PORT=3306
+DB_USER=m48971_shopping
+DB_PWD=ghtdf567b

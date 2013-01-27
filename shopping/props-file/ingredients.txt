@@ -1,0 +1,10 @@
+1001,Chicken,g
+1002,Beef,g
+2001,Salmon,g
+2003,Cod Fillets,g
+3004,Onions,unis
+3003,Carrots,units
+3004,Celery,units
+3005,Red Onions,units
+5001,Curry Powder,tsp
+6001,Butternut Squash,units
