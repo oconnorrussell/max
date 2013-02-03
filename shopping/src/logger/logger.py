@@ -8,8 +8,8 @@ def info(msg, caller=None):
     #    caller is normally not supplied.  when called from within this module, the callers need to say what the actual caller is
     if caller == None:
         caller  =   _callersName()
-        
-    print   caller + ':' + msg
+    
+    print 'info:' + caller + ':' + msg
 
 def started():
     #    issue a started log message
@@ -18,3 +18,9 @@ def started():
 def completed():
     #    issue a completed log message
     info('Completed', _callersName())
+
+def err(msg, caller=None):
+    #    caller is normally not supplied.  when called from within this module, the callers need to say what the actual caller is
+    if caller == None:
+        caller  =   _callersName()
+    print 'err:' + caller + ':' + msg

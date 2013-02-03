@@ -1,6 +1,6 @@
 import sys
 
-class propertyManager():
+class propManager():
     
     def __init__(self):
         try:

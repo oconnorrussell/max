@@ -2,18 +2,17 @@ from Tkinter import *
 import Tkinter as ttk
 import MySQLdb
 
-from src.properties import propManager
-from src.conns.mysql import mysqlConn
-from src.logger import logger
+from properties import propManager
+from conns.mysql import mysqlConn
+from logger import logger
 
 class   ShoppingManager():
 
     def __init__(self):
-
-        logger.info('x', 'b')
+        logger.started()
 
         logger.info('about to create the prop mgr')
-        self.pm =   propManager.propertyManager()
+        self.pm =   propManager.propManager()
         
         logger.info('about to create the mysql conn')
         self.conn   =  mysqlConn.mysqlConn()
@@ -55,7 +54,7 @@ class   ShoppingManager():
     
             
     def initRecipes(self):
-
+        logger.started()
         tmp =   []
         
         if  self.pm.get('USE_DB') == 'Y':
@@ -72,8 +71,8 @@ class   ShoppingManager():
             try:
                 myfile = open(self.pm.get('RECIPES_FILE'), 'r')
             except:
-                print "failed to find recipes, aborting"
-                sys.exit
+                logger.err("failed to find recipes, aborting")
+                sys.exit()
             else:                             
                 for line in myfile:  
                     l = line[0:len(line)-1]
@@ -93,9 +92,10 @@ class   ShoppingManager():
                       'is_make':IntVar()
                      }
             self.recipes.append(recipe)
+            logger.completed()
                                                                  
     def initIngreds(self):
-
+        logger.started()
         tmp =   []
         
         if  self.pm.get('USE_DB') == 'N':
@@ -104,7 +104,7 @@ class   ShoppingManager():
                 self.l.info('path=' + path)
                 myfile = open(path, 'r')
             except:
-                print "failed to find ingredients file, aborting"
+                logger.err( "failed to find ingredients file, aborting")
                 sys.exit()
             else:
                 for line in myfile:  
@@ -133,9 +133,10 @@ class   ShoppingManager():
                       'total_req_qty_disp':StringVar()}  
 
             self.ingreds[i['id']] = ingred
+            logger.completed()
    
     def setReqQtys(self):
-        
+        logger.started()
         for i in self.ingreds:
             self.ingreds[i]['total_req_qty']    =    0
         for r in self.recipes:
@@ -145,10 +146,10 @@ class   ShoppingManager():
         for i in self.ingreds:
             if self.ingreds[i]['total_req_qty'] >0:
                 self.ingreds[i]['total_req_qty_disp'].set(str(self.ingreds[i]['total_req_qty']) + self.ingreds[i]['units'])
-            
+        logger.completed()
     
     def ingestRecipiesIngredients(self):
-
+        logger.started()
         tmp =   []
         
         if  self.pm.get('USE_DB') == 'N':
@@ -156,8 +157,8 @@ class   ShoppingManager():
             try:
                 myfile = open(self.pm.get('RECIPE_INGREDIENTS_FILE'), 'r')
             except:
-                print "failed to find recipesingredients, aborting"
-                sys.exit
+                logger.err("failed to find recipesingredients, aborting")
+                sys.exit()
             else:
                 self.recipesIngredients = {}
                 for line in myfile:  
@@ -168,14 +169,13 @@ class   ShoppingManager():
                     qty = elements[2]
                
                     if recipeId in self.recipesIngredients:
-                        print   'recipeId=' + str(recipeId) + ' exists'
+                        logger.info('recipeId=' + str(recipeId) + ' exists')
                     else:
-                        print   'adding recipeId=' + str(recipeId)
+                        logger.info('adding recipeId=' + str(recipeId))
                         self.recipesIngredients[recipeId]    =   {}
                                         
                     self.recipesIngredients[recipeId][ingredId]  =   int(qty)
                 
-                print self.recipesIngredients 
         else:
             
             #    initialize a cursor on the connection.  a cursor is essentially a reference to a SELECT stmt and the rows that it returns once executed
@@ -193,34 +193,37 @@ class   ShoppingManager():
             self.recipesIngredients = {}
             
             if ri['ri'] in self.recipesIngredients:
-                print   'recipeId=' + str(recipeId) + ' exists'
+                logger.info('recipeId=' + str(recipeId) + ' exists')
             else:
-                print   'adding recipeId=' + str(recipeId)
+                logger.info('adding recipeId=' + str(recipeId))
                 self.recipesIngredients[ri['rid']]    =   {}
                                         
                 self.recipesIngredients[ri['rid']][ri['iid']]  =   int(qty)
+        logger.completed()
                          
     def dumpRecipes(self):
+        logger.started()
         i = 0
-        #print self.recipes
-        #print self.ingreds
         for r in self.recipes:
-            print 'Recipe name = ' + r['name']
-            #print r
+            logger.info('Recipe name = ' + r['name'])
             for i in r['ingreds']:
-                print r['name'] + ' ingred = ' + self.ingreds[i]['name'] + ' Qty =' + str(r['ingreds'][i])
-                                               
+                logger.info(r['name'] + ' ingred = ' + self.ingreds[i]['name'] + ' Qty =' + str(r['ingreds'][i]))
+        logger.completed()                                      
     def dumprecipesIngredients(self):
-        print self.recipesIngredients.__str__()
-    
+        logger.started()
+        logger.info(self.recipesIngredients.__str__())
+        logger.completed()
+               
     def handleRecipeSelecions(self):
+        logger.started()
         self.setReqQtys()
         self.renderIngredsCanvas()
+        logger.completed()
    
     def renderIngredsCanvas(self):
-        return
+        logger.started()
         i = self.ingredsCanv.gettags(self.ingredsCanv)
-        print i              
+                 
         self.ingredsCanv.delete(self.ingredsCanv.find_all())
              
         myrow = 0
@@ -240,13 +243,10 @@ class   ShoppingManager():
             label.grid(row=myrow, column=mycol+3, sticky=W)
                
             myrow += 1
-        for i in self.ingredsCanv.find_all():
-                print 'john' + i                              
+        logger.completed()                          
 
     def execute(self):
-
-        proc = sys._getframe().f_code.co_name
-        print   proc + ':' + 'Started'
+        logger.started()
                      
         myrow = 0
         mycol = 1
@@ -268,22 +268,17 @@ class   ShoppingManager():
                     
         self.recipesCanv.pack()
         self.canv.pack(side=LEFT, expand=YES, fill=BOTH)
-        
+        logger.completed()
         
                    
 if __name__ == '__main__':
 
-        proc = sys._getframe().f_code.co_name
-        print   proc + ':' + 'Started'
-
-        print   'About to make the ShoppingManager'
+        logger.started()
         
         s   =   ShoppingManager()
              
         s.execute()
       
-        #    put this here so we can call the execute upon refresh
-        #print   'About to enter the main loop'
         s.frame.mainloop()
                     
-        print   proc + ':' + 'Completed'
+        logger.completed()

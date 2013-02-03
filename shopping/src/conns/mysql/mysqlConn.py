@@ -4,22 +4,22 @@ Created on Jan 6, 2013
 @author: RussellR
 '''
 import MySQLdb
-from src.properties import propManager
-from src.conns.common import conn 
+from properties import propManager
+from conns.common import conn 
 import sys
 
 
-class mysqlConn(conn):
+class mysqlConn(conn.conn):
 
     def __init__(self):
 
-        self.pm =   propManager.propertyManager()
+        self.pm =   propManager.propManager()
 
         self.host    =   self.pm.get('DB_HOST')
         self.port    =   self.pm.get('DB_PORT')
         self.db      =   self.pm.get('DB_NAME')
         
-        conn.__init__(self)
+        conn.conn.__init__(self)
 
     def connect(self):
 

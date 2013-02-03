@@ -1,12 +1,12 @@
-from    src.properties import propManager
+from    properties import propManager
 import  sys
-from    src.logger  import  logger
+from    logger  import  logger
 
 class conn():
 
     def __init__(self):
 
-        self.pm =   propManager.propertyManager()
+        self.pm =   propManager.propManager()
         
         self.user    =   self.pm.get('DB_USER')
         self.passwd  =   self.pm.get('DB_PWD')
