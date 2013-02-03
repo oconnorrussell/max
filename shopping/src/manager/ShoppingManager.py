@@ -115,10 +115,13 @@ class   ShoppingManager():
         else:
      
             #    initialize a cursor on the connection.  a cursor is essentially a reference to a SELECT stmt and the rows that it returns once executed
-            cur     =   self.oraConn.cursor()        
-
+            
+            cur     =   self.conn.connect()       
+            logger.info('connection to db')
+           
             #    load up the cursor with the SELECT stmt and execute it
-            cur.execute('select ingred_id, ingred_name, ingred_uom from ingredients')
+            cur.execute("SELECT ingred_id, ingred_name, ingred_uom from ingredients")
+            
             #    iterate thru the rows of the cursor via the cur.fetchall method.  that method returns a list for each row.  each such list contains values corresponding to the columns in the SELECT clause
 
             for (row) in cur.fetchall():
@@ -179,7 +182,7 @@ class   ShoppingManager():
         else:
             
             #    initialize a cursor on the connection.  a cursor is essentially a reference to a SELECT stmt and the rows that it returns once executed
-            cur     =   self.conn.cursor()        
+            cur     =   self.cursor()        
 
         #    load up the cursor with the SELECT stmt and execute it
             cur.execute('select recipe_id, ingred_id, qty from recipeingredients')
