@@ -8,6 +8,7 @@ from src.properties import propManager
 from src.conns.common import conn 
 import sys
 
+
 class mysqlConn(conn):
 
     def __init__(self):
