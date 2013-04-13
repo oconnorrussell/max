@@ -27,6 +27,9 @@ class   ShoppingManager():
         logger.info('about to init ingredients')
         self.initIngreds()
         
+        logger.info('about to init recipes')
+        self.initRecipes()
+        
         logger.info('about to ingest recipes ingredients')
         self.ingestRecipiesIngredients()                               
 
@@ -43,14 +46,14 @@ class   ShoppingManager():
         #    size of the displayed view window
         self.canv.config( width=500,height=100)    
         
-        self.recipesCanv = Canvas(self.canv, relief=SUNKEN, bg='Red')
+        self.recipesCanv = Canvas(self.canv, relief=SUNKEN, bg='Blue')
         self.recipesCanv.config(width=300,height=200)
         
-        self.recipesWidgetsCanv=Canvas(self.recipesCanv, bg='Yellow')
-        self.recipesWidgetsCanv.config(width=200,height=400)
-         
-        #self.ingredsCanv = Canvas(self.canv, relief=SUNKEN, bg='Yellow')
-        #self.ingredsCanv.config( width=500,height=100)
+#        self.recipesWidgetsCanv=Canvas(self.recipesCanv, bg='Yellow')
+#        self.recipesWidgetsCanv.config(width=200,height=400)
+#         
+#        self.ingredsCanv = Canvas(self.canv, relief=SUNKEN, bg='Yellow')
+#        self.ingredsCanv.config( width=500,height=100)
     
             
     def initRecipes(self):
@@ -60,7 +63,9 @@ class   ShoppingManager():
         if  self.pm.get('USE_DB') == 'Y':
                     
             #    initialize a cursor on the connection.  a cursor is essentially a reference to a SELECT stmt and the rows that it returns once executed
-            cur     =   self.mysqlConn.cursor()        
+            logger.info('using database')
+            
+            cur     =   self.conn.cursor()        
 
             #    load up the cursor with the SELECT stmt and execute it
             cur.execute('select recipe_id, recipe_name from recipes')
@@ -68,6 +73,7 @@ class   ShoppingManager():
             for (row) in cur.fetchall():
                 tmp.append({'id':row[0], 'name':row[1]})
         else:
+            logger.info('using file')
             try:
                 myfile = open(self.pm.get('RECIPES_FILE'), 'r')
             except:
@@ -83,16 +89,19 @@ class   ShoppingManager():
             temp_ingreds    =   []
             try:
                 temp_ingreds = self.recipesIngredients[r['id']]
+                logger.info('added ingred, recipe id=' + str(r['id']))
             except:
+                logger.info('no ingred found, recipe id=' + str(r['id']))
                 temp_ingreds = {}       
             
             recipe = {'id':int(r['id']),
-                      'name':r['id'], 
+                      'name':r['name'], 
                       'ingreds':temp_ingreds,
                       'is_make':IntVar()
                      }
             self.recipes.append(recipe)
-            logger.completed()
+            
+        logger.completed()
                                                                  
     def initIngreds(self):
         logger.started()
@@ -116,9 +125,10 @@ class   ShoppingManager():
      
             #    initialize a cursor on the connection.  a cursor is essentially a reference to a SELECT stmt and the rows that it returns once executed
             
-            cur     =   self.conn.connect()       
+            self.conn.connect()
             logger.info('connection to db')
-           
+            cur = self.conn.cursor()       
+            
             #    load up the cursor with the SELECT stmt and execute it
             cur.execute("SELECT ingred_id, ingred_name, ingred_uom from ingredients")
             
@@ -136,7 +146,7 @@ class   ShoppingManager():
                       'total_req_qty_disp':StringVar()}  
 
             self.ingreds[i['id']] = ingred
-            logger.completed()
+        logger.completed()
    
     def setReqQtys(self):
         logger.started()
@@ -156,7 +166,7 @@ class   ShoppingManager():
         tmp =   []
         
         if  self.pm.get('USE_DB') == 'N':
-        
+            logger.info('reading from file')
             try:
                 myfile = open(self.pm.get('RECIPE_INGREDIENTS_FILE'), 'r')
             except:
@@ -182,7 +192,8 @@ class   ShoppingManager():
         else:
             
             #    initialize a cursor on the connection.  a cursor is essentially a reference to a SELECT stmt and the rows that it returns once executed
-            cur     =   self.cursor()        
+            logger.info('reading from database')
+            cur     =   self.conn.cursor()        
 
         #    load up the cursor with the SELECT stmt and execute it
             cur.execute('select recipe_id, ingred_id, qty from recipeingredients')
@@ -190,49 +201,60 @@ class   ShoppingManager():
 
             for (row) in cur.fetchall():
                 tmp.append({'rid':row[0],'iid':row[1],'q':row[2]})
-
+                
+        self.recipesIngredients = {}
+                
         for ri in tmp:
-            
-            self.recipesIngredients = {}
-            
-            if ri['ri'] in self.recipesIngredients:
-                logger.info('recipeId=' + str(recipeId) + ' exists')
+                       
+            if ri['rid'] in self.recipesIngredients:
+                logger.info('recipeId =' + str(ri['rid']) + ' exists')
+                self.recipesIngredients[ri['rid']][ri['iid']]  =   int(ri['q'])
+                
             else:
-                logger.info('adding recipeId=' + str(recipeId))
+                logger.info('adding recipeId =' + str(ri['rid']) + ' ingred ID =' + str(ri['iid']))
                 self.recipesIngredients[ri['rid']]    =   {}
-                                        
-                self.recipesIngredients[ri['rid']][ri['iid']]  =   int(qty)
+                                                            
+                self.recipesIngredients[ri['rid']][ri['iid']]  =   int(ri['q'])
+        print self.recipesIngredients
+                  
+        self.dumpRecipesIngredients()
         logger.completed()
                          
     def dumpRecipes(self):
         logger.started()
         i = 0
         for r in self.recipes:
-            logger.info('Recipe name = ' + r['name'])
+            logger.info('Recipe name = ' + str(r['name']))
             for i in r['ingreds']:
-                logger.info(r['name'] + ' ingred = ' + self.ingreds[i]['name'] + ' Qty =' + str(r['ingreds'][i]))
-        logger.completed()                                      
-    def dumprecipesIngredients(self):
+                logger.info(str(r['name']) + ' ingred = ' + str(self.ingreds[i]['name']) + ' Qty =' + str(r['ingreds'][i]))
+        logger.completed() 
+                                             
+    def dumpRecipesIngredients(self):
         logger.started()
-        logger.info(self.recipesIngredients.__str__())
+        for i in self.recipesIngredients:
+            logger.info('recipe id =' + str([i]))
         logger.completed()
                
     def handleRecipeSelecions(self):
         logger.started()
         self.setReqQtys()
         self.renderIngredsCanvas()
+        self.recipesCanv.pack()
+        self.canv.pack(side=LEFT, expand=YES, fill=BOTH)
         logger.completed()
    
     def renderIngredsCanvas(self):
+        
         logger.started()
-        i = self.ingredsCanv.gettags(self.ingredsCanv)
+        #i = self.ingredsCanv.gettags(self.ingredsCanv)
                  
-        self.ingredsCanv.delete(self.ingredsCanv.find_all())
+        #self.ingredsCanv.delete(self.ingredsCanv.find_all())
              
         myrow = 0
-        mycol = 1    
+        mycol = 1
+        logger.info('about to add recipe ingreds')    
         for i in self.ingreds:
-              
+            logger.info('adding recipe ingreds')
             label = Label(self.ingredsCanv, text=self.ingreds[i]['name'])
             label.grid(row=myrow, column=mycol, sticky=W)
             
@@ -253,11 +275,14 @@ class   ShoppingManager():
                      
         myrow = 0
         mycol = 1
-               
+        
+        self.dumpRecipes()
+        sys.exit()
+              
         for r in self.recipes:
-            label   =   Label(self.recipesWidgetsCanv, text=r['name'])
+            label   =   Label(self.recipesCanv, text=r['name'])
             label.grid(row=myrow, column=mycol, sticky=W)
-            chk =   Checkbutton(self.recipesWidgetsCanv, text="", variable=r['is_make'], command=self.handleRecipeSelecions)
+            chk =   Checkbutton(self.recipesCanv, text="", variable=r['is_make'], command=self.handleRecipeSelecions)
             chk.grid(row=myrow, column=mycol+1, sticky=W)
                                      
             myrow += 1
