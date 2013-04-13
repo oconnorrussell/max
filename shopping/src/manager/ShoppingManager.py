@@ -2,6 +2,7 @@ from Tkinter import *
 import Tkinter as ttk
 import MySQLdb
 
+
 from properties import propManager
 from conns.mysql import mysqlConn
 from logger import logger
