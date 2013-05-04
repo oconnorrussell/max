@@ -21,6 +21,7 @@ def _info(msg, caller=None):
 def started():
     #    issue a started log message
     _info('Started', _callersName())
+##
 
 def completed():
     #    issue a completed log message
