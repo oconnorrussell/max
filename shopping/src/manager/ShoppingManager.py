@@ -37,24 +37,31 @@ class   ShoppingManager():
         logger.info('about to init recipes')
         self.initRecipes()
         
-        #    add the processes frame to the root window
+        root = Tk()
+        root.title('Shopping Manager')
+        
         self.frame   =   Frame(root,width=1000, height=200)
         self.frame.pack(expand=YES, fill=BOTH)
-           
-        #    add a canvas to the frame whose geometry manager is the grid.
-        self.canv    =   Canvas(self.frame, relief=SUNKEN)
-
-        #    size of the displayed view window
-        self.canv.config( width=500,height=100)    
         
-        self.recipesCanv = Canvas(self.canv, relief=SUNKEN, bg='Blue')
-        self.recipesCanv.config(width=300,height=200)
+        self.recipesFrame  =   Frame(self.frame, bg='Blue', bd=10)
+        self.recipesFrame.pack(expand=YES, fill=BOTH, side=LEFT)
         
-#        self.recipesWidgetsCanv=Canvas(self.recipesCanv, bg='Yellow')
-#        self.recipesWidgetsCanv.config(width=200,height=400)
-#         
-#        self.ingredsCanv = Canvas(self.canv, relief=SUNKEN, bg='Yellow')
-#        self.ingredsCanv.config( width=500,height=100)
+        self.ingredsFrame  =   Frame(self.frame, bg='Green', bd=10)
+        self.ingredsFrame.pack(expand=YES, fill=BOTH, side=LEFT)
+        
+        self.listFrame  =   Frame(self.frame, bg='Red', bd=10)
+        self.listFrame.pack(expand=YES, fill=BOTH, side=LEFT)
+        
+        self.recipesCanv   =   Canvas(self.recipesFrame, bg='Yellow')
+        self.recipesCanv.pack(expand=YES, fill=BOTH, side=TOP)
+        
+        self.ingredsCanv   =   Canvas(self.ingredsFrame, bg='pink')
+        self.ingredsCanv.pack(expand=YES, fill=BOTH, side=TOP)
+        
+        self.listCanv   =   Canvas(self.listFrame, bg='orange')
+        self.listCanv.pack(expand=YES, fill=BOTH, side=TOP)               
+        #    add the processes frame to the root window
+        
     
             
     def initRecipes(self):
@@ -216,7 +223,6 @@ class   ShoppingManager():
                 self.recipesIngredients[ri['rid']]    =   {}
                                                             
                 self.recipesIngredients[ri['rid']][ri['iid']]  =   int(ri['q'])
-        print self.recipesIngredients
                   
         self.dumpRecipesIngredients()
         logger.completed()
@@ -236,12 +242,10 @@ class   ShoppingManager():
             logger.info('recipe id =' + str([i]))
         logger.completed()
                
-    def handleRecipeSelecions(self):
+    def handleRecipeSelections(self):
         logger.started()
         self.setReqQtys()
         self.renderIngredsCanvas()
-        self.recipesCanv.pack()
-        self.canv.pack(side=LEFT, expand=YES, fill=BOTH)
         logger.completed()
    
     def renderIngredsCanvas(self):
@@ -278,25 +282,14 @@ class   ShoppingManager():
         mycol = 1
         
         self.dumpRecipes()
-        sys.exit()
               
         for r in self.recipes:
             label   =   Label(self.recipesCanv, text=r['name'])
             label.grid(row=myrow, column=mycol, sticky=W)
-            chk =   Checkbutton(self.recipesCanv, text="", variable=r['is_make'], command=self.handleRecipeSelecions)
+            chk =   Checkbutton(self.recipesCanv, text="", variable=r['is_make'], command=self.handleRecipeSelections)
             chk.grid(row=myrow, column=mycol+1, sticky=W)
                                      
             myrow += 1
-        
-              
-        #    vertical scrollbar        
-        #vert_sbar    =   Scrollbar(self.recipesCanv, orient='vertical')        
-        #vert_sbar.config(command=self.recipesWidgetsCanv.yview)
-        #self.recipesWidgetsCanv.config(yscrollcommand=vert_sbar.set)
-        #vert_sbar.pack(side=RIGHT, fill=Y)
-                    
-        self.recipesCanv.pack()
-        self.canv.pack(side=LEFT, expand=YES, fill=BOTH)
         logger.completed()
         
                    
