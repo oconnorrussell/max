@@ -1,7 +1,8 @@
 import sys
 import datetime
+sys.stdout.flush()
 
-logfile = open('log_file.txt', 'w')
+logfile = open('c:\\temp\\log_file.txt', 'w')
 
 
 def _callersName():
@@ -10,10 +11,7 @@ def _callersName():
     return    sys._getframe(2).f_code.co_name
 
 def info(msg):
-    _info(msg,_callersName())
-    
-    
-    
+    _info(msg,_callersName())   
 
 def _info(msg, caller=None):
     #    caller is normally not supplied.  when called from within this module, the callers need to say what the actual caller is

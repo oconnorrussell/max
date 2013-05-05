@@ -20,7 +20,7 @@ class   ShoppingManager():
                     
         self.recipes = []
         self.ingreds = {}      
-        self.recipesIngredients = []
+        self.recipesIngredients = {}
         
         root = Tk()
         root.title('Shopping Manager')
@@ -36,9 +36,6 @@ class   ShoppingManager():
 
         logger.info('about to init recipes')
         self.initRecipes()
-        
-        root = Tk()
-        root.title('Shopping Manager')
         
         self.frame   =   Frame(root,width=1000, height=200)
         self.frame.pack(expand=YES, fill=BOTH)
@@ -152,7 +149,6 @@ class   ShoppingManager():
                       'is_buy':IntVar(),
                       'total_req_qty':0,
                       'total_req_qty_disp':StringVar()}  
-
             self.ingreds[i['id']] = ingred
         logger.completed()
    
@@ -166,7 +162,7 @@ class   ShoppingManager():
                     self.ingreds[i]['total_req_qty']    +=    r['ingreds'][i]
         for i in self.ingreds:
             if self.ingreds[i]['total_req_qty'] >0:
-                self.ingreds[i]['total_req_qty_disp'].set(str(self.ingreds[i]['total_req_qty']) + self.ingreds[i]['units'])
+                self.ingreds[i]['total_req_qty_disp'].set(str(self.ingreds[i]['total_req_qty']) + self.ingreds[i]['units'])             
         logger.completed()
     
     def ingestRecipiesIngredients(self):
@@ -200,7 +196,7 @@ class   ShoppingManager():
         else:
             
             #    initialize a cursor on the connection.  a cursor is essentially a reference to a SELECT stmt and the rows that it returns once executed
-            logger.info('reading from database')
+            logger.info('ingestRecipeIngreds: reading from database')
             cur     =   self.conn.cursor()        
 
         #    load up the cursor with the SELECT stmt and execute it
@@ -224,7 +220,7 @@ class   ShoppingManager():
                                                             
                 self.recipesIngredients[ri['rid']][ri['iid']]  =   int(ri['q'])
                   
-        self.dumpRecipesIngredients()
+        #self.dumpRecipesIngredients()
         logger.completed()
                          
     def dumpRecipes(self):
@@ -251,25 +247,22 @@ class   ShoppingManager():
     def renderIngredsCanvas(self):
         
         logger.started()
-        #i = self.ingredsCanv.gettags(self.ingredsCanv)
-                 
-        #self.ingredsCanv.delete(self.ingredsCanv.find_all())
              
         myrow = 0
         mycol = 1
-        logger.info('about to add recipe ingreds')    
+        logger.info('about to add recipe ingreds')  
         for i in self.ingreds:
             logger.info('adding recipe ingreds')
             label = Label(self.ingredsCanv, text=self.ingreds[i]['name'])
             label.grid(row=myrow, column=mycol, sticky=W)
             
-            chk =   Checkbutton(self.ingredsCanv, text="", variable=self.ingreds[i]['is_needed'])
-            chk.grid(row=myrow, column=mycol+1, sticky=W)
+#            chk =   Checkbutton(self.ingredsCanv, text="", variable=self.ingreds[i]['is_needed'])
+#            chk.grid(row=myrow, column=mycol+1, sticky=W)
+#            
+#            chk =   Checkbutton(self.ingredsCanv, text="", variable=self.ingreds[i]['is_buy'])
+#            chk.grid(row=myrow, column=mycol+2, sticky=W)
             
-            chk =   Checkbutton(self.ingredsCanv, text="", variable=self.ingreds[i]['is_buy'])
-            chk.grid(row=myrow, column=mycol+2, sticky=W)
-            
-            label = Label(self.ingredsCanv,textvariable=self.ingreds[i]['total_req_qty_disp'])
+            label = Label(self.ingredsCanv, textvariable=self.ingreds[i]['total_req_qty_disp'])
             label.grid(row=myrow, column=mycol+3, sticky=W)
                
             myrow += 1
