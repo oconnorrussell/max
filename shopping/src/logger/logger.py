@@ -40,7 +40,7 @@ def _err(msg, caller=None):
 
 def _print(msg, caller = None):
     now = datetime.datetime.now()
-    _msg = '[' + str(now) + ']' + '' + msg + ']' + '\n'
+    _msg = '[' + str(now) + ']' + '' + msg + ']'
     print _msg
-    logfile.write(_msg)
+    logfile.write(_msg + '\n')
     

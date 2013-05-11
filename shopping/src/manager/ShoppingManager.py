@@ -3,6 +3,9 @@ import Tkinter as ttk
 import MySQLdb
 
 
+
+
+
 from properties import propManager
 from conns.mysql import mysqlConn
 from logger import logger
@@ -27,9 +30,6 @@ class   ShoppingManager():
         
         logger.info('about to init ingredients')
         self.initIngreds()
-        
-        logger.info('about to init recipes')
-        self.initRecipes()
         
         logger.info('about to ingest recipes ingredients')
         self.ingestRecipiesIngredients()                               
@@ -58,9 +58,7 @@ class   ShoppingManager():
         self.listCanv   =   Canvas(self.listFrame, bg='orange')
         self.listCanv.pack(expand=YES, fill=BOTH, side=TOP)               
         #    add the processes frame to the root window
-        
-    
-            
+              
     def initRecipes(self):
         logger.started()
         tmp =   []
@@ -99,7 +97,8 @@ class   ShoppingManager():
                 logger.info('no ingred found, recipe id=' + str(r['id']))
                 temp_ingreds = {}       
             
-            recipe = {'id':int(r['id']),
+            recipe = {
+                      'id':int(r['id']),
                       'name':r['name'], 
                       'ingreds':temp_ingreds,
                       'is_make':IntVar()
@@ -284,7 +283,6 @@ class   ShoppingManager():
                                      
             myrow += 1
         logger.completed()
-        
                    
 if __name__ == '__main__':
 
@@ -295,5 +293,12 @@ if __name__ == '__main__':
         s.execute()
       
         s.frame.mainloop()
-                    
+
         logger.completed()
+    
+            
+
+
+
+                    
+        

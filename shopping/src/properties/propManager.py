@@ -9,13 +9,11 @@ class propManager():
         propFile = None
         print 'SM_PROP_DIR = ' + str(os.environ.get('SM_PROP_DIR'))
         if os.environ.has_key('SM_PROP_DIR'):
-            
             try:
                 propFile = os.environ.get('SM_PROP_DIR') + '\propertyfile.dat'
             except:
                 print 'failed to form propFile, aborting.'
                 sys.exit()
-            
             else:
                 try:
                     print 'attempting to open propertyfile.dat =' + propFile
