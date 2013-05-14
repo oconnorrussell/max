@@ -1,6 +1,7 @@
 from Tkinter import *
 import Tkinter as ttk
 import MySQLdb
+from emailer import emaillogfile
 
 
 
@@ -295,6 +296,10 @@ if __name__ == '__main__':
         s.frame.mainloop()
 
         logger.completed()
+        
+        logger.terminate()
+        
+        openfile = emaillogfile.textEmailPayloadFromFile('c:\\temp\\log_file.txt')
     
             
 

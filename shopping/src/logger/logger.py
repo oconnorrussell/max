@@ -4,6 +4,11 @@ sys.stdout.flush()
 
 logfile = open('c:\\temp\\log_file.txt', 'w')
 
+def _closeLogFile():
+    logfile.close('c:\\temp\\log_file.txt')
+    
+def terminate():
+    _closeLogFile
 
 def _callersName():
     #    return the name of the caller
