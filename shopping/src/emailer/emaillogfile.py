@@ -1,72 +1,27 @@
 import smtplib
 import sys
-#from logger import logger
 
-#def sendEmail(from_addr, to_addr_list, cc_addr_list,
-#    subject, message,
-#    login, password,
-#    smtpserver='smtp.gmail.com:587'):
-#    header  = 'From: %s\n' % from_addr
-#    header += 'To: %s\n' % ','.join(to_addr_list)
-#    header += 'Cc: %s\n' % ','.join(cc_addr_list)
-#    header += 'Subject: %s\n\n' % subject
-#    message = header + message
-#    server = smtplib.SMTP(smtpserver)
-#    server.starttls()
-#    server.login(login,password)
-#    problems = server.sendmail(from_addr, to_addr_list, message)
-#    server.quit()
-#
-#
-#
-#sendEmail(from_addr    = 'oconnor.russell@gmail.com', 
-#    to_addr_list = ['oconnor.russell@gmail.com'],
-#    cc_addr_list = ['oconnor.russell@gmail.com'], 
-#    subject      = 'SHOPPING FILE LOGFILE.TXT', 
-#    message      = str(messagetext), 
-#    login        = 'oconnor.russell', 
-#    password     = '')
-#
-#
-#class    payload():
-#    def __init__(self, payload):
-#        self.message = payload
-#    def set(self):
-#        return
-#
-#class   atachment(payload):
-#    ## handles email content in the form of attached files
-#    def __init__(file):
-#        return
-#
 class   textEmailPayload():
     # handles email content set in body
     def __init__(self, txt):
-        self.txt    =    txt
-    def set(self, txt):
-            # -    set the text
-            self.txt = txt
+        self.txt    =    txt       
     def get(self):
             #-    returns the text
             return self.txt
-        
-class   suppliedStringEmailPayload(textEmailPayload):
-    def __init__(self):
-        pass
-    def readText(self, supp):
-        textEmailPayload.__init__(self, supp)
              
 class   textEmailPayloadFromFile(textEmailPayload):
     #    handles email content set in body read from supplied file
     def __init__(self):
         #    reads the file, prep the msg string and calls set of base class
         pass
-    def readFile(self, path):
+    def setMessageTXT(self, path):
             try:
                 myfile = open(path)
+                print path + ' is a valid file path and file exists, emailing contents'
             except:
-                print 'file does not exist'
-                sys.exit()
+                print 'sending email'
+                txt = path
+                textEmailPayload.__init__(self, txt)
             else:
                 lines = []
                 txt = ''
@@ -79,19 +34,35 @@ class   textEmailPayloadFromFile(textEmailPayload):
 class   emailer():
     def __init__(self):
         pass
-    def send(self, payload):
-       print payload
-       
+    def send(self,from_addr, to_addr_list, cc_addr_list,
+                  subject, message,
+                  login, password,
+                  smtpserver='smtp.gmail.com:587'):
+        header  = 'From: %s\n' % from_addr
+        header += 'To: %s\n' % ','.join(to_addr_list)
+        header += 'Cc: %s\n' % ','.join(cc_addr_list)
+        header += 'Subject: %s\n\n' % subject
+        message = header + message
+        print message
+        server = smtplib.SMTP(smtpserver)
+        server.starttls()
+        server.login(login,password)
+        problems = server.sendmail(from_addr, to_addr_list, message)
+        server.quit()    
         
 if __name__ == '__main__':
     
-    e = emailer()
-    t = suppliedStringEmailPayload()
-    t.readText('hello sending text string')
-    e.send(textEmailPayload.get(t))
-#    p = textEmailPayloadFromFile()
-#    p.readFile('c:\\temp\\log_file.txt')
-#    e.send(textEmailPayload.get(p))
+    emailer = emailer()
+    p = textEmailPayloadFromFile()
+    p.setMessageTXT('c:\\temp\\log_file.txt')
+    messagetext = textEmailPayload.get(p)
+    emailer.send(from_addr    = 'oconnor.russell@gmail.com', 
+                      to_addr_list = ['oconnor.russell@gmail.com'],
+                      cc_addr_list = ['oconnor.russell@gmail.com'], 
+                      subject      = 'SHOPPING FILE LOGFILE.TXT', 
+                      message      = str(messagetext), 
+                      login        = 'oconnor.russell', 
+                      password     = '')
     
     
 #    
