@@ -2,7 +2,7 @@ import emitter
 import payload
 import smtplib
 
-class emailEmitter(emitter):
+class emailEmitter(emitter.emitter):
     
     def __init__(self, un, pwd, smtpServer):
         self.un = un

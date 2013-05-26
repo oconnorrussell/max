@@ -1,3 +1,7 @@
 import dispatcher
+import filePayload
 
-d = dispatcher()
+
+d = dispatcher.dispatcher()
+p = filePayload.filePayload('c:\\temp\\log_file.txt')
+d.dispatchViaEmail(p)

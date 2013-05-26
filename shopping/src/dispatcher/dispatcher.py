@@ -1,11 +1,15 @@
 import emailEmitter
 
-class Dispatcher():
+class dispatcher():
     
     def __init__(self):
         
         self.payload = None
-        self.em = emailEmitter('oconnor.russell', 'olknlknb', 'smtp.gmail.com:587')
+        un = 'oconnor.russell'
+        pw = '7gkW32iN'
+        smtpServer = 'smtp.gmail.com:587'
+        
+        self.em = emailEmitter.emailEmitter(un, pw, smtpServer)
     
     def getEmailEmitter(self):
         return self.em

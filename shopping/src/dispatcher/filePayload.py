@@ -1,7 +1,7 @@
 import payload
 from logger import logger
 
-class filePayload(payload):
+class filePayload(payload.payload):
     
     def __init__(self, path):
         self.path = path
@@ -18,4 +18,4 @@ class filePayload(payload):
             for l in lines:
                 txt = txt + l
                 
-            super.__init__(self,txt)
+            payload.payload.__init__(self, txt)
